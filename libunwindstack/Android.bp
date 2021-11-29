@@ -82,6 +82,7 @@ cc_defaults {
         "RegsX86_64.cpp",
         "RegsMips.cpp",
         "RegsMips64.cpp",
+        "RegsRiscv64.cpp",
         "Symbols.cpp",
         "ThreadEntry.cpp",
         "ThreadUnwinder.cpp",

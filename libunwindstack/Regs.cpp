@@ -27,12 +27,14 @@
 #include <unwindstack/RegsArm64.h>
 #include <unwindstack/RegsMips.h>
 #include <unwindstack/RegsMips64.h>
+#include <unwindstack/RegsRiscv64.h>
 #include <unwindstack/RegsX86.h>
 #include <unwindstack/RegsX86_64.h>
 #include <unwindstack/UserArm.h>
 #include <unwindstack/UserArm64.h>
 #include <unwindstack/UserMips.h>
 #include <unwindstack/UserMips64.h>
+#include <unwindstack/UserRiscv64.h>
 #include <unwindstack/UserX86.h>
 #include <unwindstack/UserX86_64.h>
 
@@ -67,6 +69,8 @@ Regs* Regs::RemoteGet(pid_t pid) {
     return RegsMips::Read(buffer.data());
   case sizeof(mips64_user_regs):
     return RegsMips64::Read(buffer.data());
+  case sizeof(riscv64_user_regs):
+    return RegsRiscv64::Read(buffer.data());
   }
   return nullptr;
 }
@@ -85,6 +89,8 @@ Regs* Regs::CreateFromUcontext(ArchEnum arch, void* ucontext) {
       return RegsMips::CreateFromUcontext(ucontext);
     case ARCH_MIPS64:
       return RegsMips64::CreateFromUcontext(ucontext);
+    case ARCH_RISCV64:
+      return RegsRiscv64::CreateFromUcontext(ucontext);
     case ARCH_UNKNOWN:
     default:
       return nullptr;
@@ -100,6 +106,8 @@ ArchEnum Regs::CurrentArch() {
   return ARCH_X86;
 #elif defined(__x86_64__)
   return ARCH_X86_64;
+#elif defined(__riscv)
+  return ARCH_RISCV64;
 #else
   abort();
 #endif
@@ -115,6 +123,8 @@ Regs* Regs::CreateFromLocal() {
   regs = new RegsX86();
 #elif defined(__x86_64__)
   regs = new RegsX86_64();
+#elif defined(__riscv)
+  regs = new RegsRiscv64();
 #else
   abort();
 #endif
@@ -153,6 +163,7 @@ uint64_t GetPcAdjustment(uint64_t rel_pc, Elf* elf, ArchEnum arch) {
       }
       return 4;
     }
+  case ARCH_RISCV64:
   case ARCH_ARM64: {
     if (rel_pc < 4) {
       return 0;

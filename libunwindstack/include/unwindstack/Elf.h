@@ -34,6 +34,10 @@
 #define EM_AARCH64 183
 #endif
 
+#if !defined(EM_RISCV64)
+#define EM_RISCV64 243
+#endif
+
 namespace unwindstack {
 
 // Forward declaration.
