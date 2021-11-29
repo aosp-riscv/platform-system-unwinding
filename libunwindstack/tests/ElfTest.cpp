@@ -185,7 +185,7 @@ TEST_F(ElfTest, elf64_invalid_machine) {
   ASSERT_FALSE(elf.Init());
 
   ASSERT_EQ("", GetFakeLogBuf());
-  ASSERT_EQ("4 unwind 64 bit elf that is neither aarch64 nor x86_64 nor mips64: e_machine = 21\n\n",
+  ASSERT_EQ("4 unwind 64 bit elf that is neither aarch64 nor riscv64 nor x86_64 nor mips64: e_machine = 21\n\n",
             GetFakeLogPrint());
 }
 
@@ -233,6 +233,18 @@ TEST_F(ElfTest, elf_arm64) {
   ASSERT_TRUE(elf.Init());
   ASSERT_TRUE(elf.valid());
   ASSERT_EQ(static_cast<uint32_t>(EM_AARCH64), elf.machine_type());
+  ASSERT_EQ(ELFCLASS64, elf.class_type());
+  ASSERT_TRUE(elf.interface() != nullptr);
+}
+
+TEST_F(ElfTest, elf_riscv64) {
+  Elf elf(memory_);
+
+  InitElf64(EM_RISCV64);
+
+  ASSERT_TRUE(elf.Init());
+  ASSERT_TRUE(elf.valid());
+  ASSERT_EQ(static_cast<uint32_t>(EM_RISCV64), elf.machine_type());
   ASSERT_EQ(ELFCLASS64, elf.class_type());
   ASSERT_TRUE(elf.interface() != nullptr);
 }
